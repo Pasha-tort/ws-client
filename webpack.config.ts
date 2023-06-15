@@ -4,13 +4,14 @@ import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import TerserWebpackPlugin from "terser-webpack-plugin";
 import MiniExtractPlugin from "mini-css-extract-plugin";
 import HTMLWebpackPlugin from "html-webpack-plugin";
+import autoprefixer from "autoprefixer";
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
 
 const filename = (ext: string, name?: string) => isDev ? `${name || "[name]"}.[contenthash].${ext}` : `[hash].${ext}`
 
-export const cssLoaders = (param?: string | string[] | RuleSetRule) => {
+export const cssLoaders = (param?: (string | string[] | RuleSetRule | RuleSetRule[])) => {
   const loader: (string | RuleSetRule)[] = [
     MiniExtractPlugin.loader, 
     'css-loader',
@@ -29,8 +30,7 @@ const config: webpack.Configuration = {
     filename: filename("js", "index"),
     path: path.resolve(__dirname, "public"),
     assetModuleFilename: (path: PathData) => path.filename!,
-    clean: true, /*очистить выходной каталог перед испусканием*/
-    // compareBeforeEmit: true, /*проверяет перед испусканием сущ-ет ли файл в выходном каталоге, по сути не нужен при использовании clean*/
+    clean: true,
   },
   resolve: {
     alias: {
@@ -56,19 +56,20 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: cssLoaders(),
-      },
-      {
         test: /\.scss$/,
-        use: cssLoaders({
-          loader: "sass-loader",
-          options: {
-            includePaths: [
-              "assets",
-            ],
-          },
-        }),
+        use: [
+          MiniExtractPlugin.loader,
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: () => autoprefixer,
+              },
+            }
+          }, 
+          "sass-loader",
+        ],
       },
       {
         test: /\.ts$/,
