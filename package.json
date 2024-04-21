@@ -8,7 +8,7 @@
     "build": "cross-env NODE_ENV=production webpack --config ./webpack.config.prod.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Pkorotkikh <pkorotkikh@sfxdx.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.2.5",
@@ -34,5 +34,6 @@
   "dependencies": {
     "bootstrap": "^5.3.0",
     "cross-env": "^7.0.3"
-  }
+  },
+  "repository": "https://github.com/Pasha-tort/build-one-page.git"
 }
